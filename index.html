@@ -1,66 +1,138 @@
 <!DOCTYPE html>
 <html>
-<link rel="stylesheet" media="all" type="text/css" href="css/navi.css" />
-<body>
-<form action="mailto:nathanbelaye@gmail.com" method="post" enctype="text/plain">
-<div id="form">
-
-	<center><label for="uname">How Many Faces Do You See?</label> <br/></center>
-	<center><img src="https://lh3.googleusercontent.com/9Ebognt8wWdsp8JA_q9hcxl_s0HL0rG0dKebNGvShJIvLFDbY97xRQ5TAVXc6pEKjiUeLCsnH6SNFPu1SciydCfhXh07QksJrLPXMr0InUC9u-biSVBohnYnvNZZZXEwa2f4hyY" alt="Photo" align="middle" height="300" width="500" /></center>
-	<center><input type="num" id="First Picture" name="First Picture" value="Please Input a number" size="20" maxlength ="250"><br/><br/></center>
-	<center><img src="https://lh5.googleusercontent.com/FIT5h4jo6vWYjNrjBCdAXs3Ij-Ei28NPED7GDn9PaFQ_0yk_csoFdZDwse2YJnAK4A0qzMT-2ig8GzAAN7Y3jRhXW8muFGrkk_sBA4RxEuwgGuAmodpesTgDjItpoG6w-F_GKIU" alt="Photo" height="300" width="500"/></center>
-	<center><input type="text" id="Second Picture" name="Second Picture" size="20" maxlength ="250"><br/><br/></center>
-	<center><img src="https://lh5.googleusercontent.com/Hh8gjlMO477nqUkLtM-iwC4LMmUaw8puCEbi579VKOSDRJjtCrVIRG_1sm1hND2NcFFgxlnj8b5a9ELMobOjdzUWFfBBrNlxWqgVZpHK5yOuJ0Om7MhjOgju2WHa7pab3dFQxt4" alt="Photo" height="300" width="500" /></center>
-	<center><input type="text" id="Third Picture" name="Third Picture" size="20" maxlength ="250"><br/><br/></center>
-	<center><img src="https://lh6.googleusercontent.com/bNNzkIeHB7OxBTK4mKiZFP_fZLspiha1wtxV2H7zMQl44QyxWu1Ph8RD_pcDz9NqQEaWm-DbilDhDNTMJ2vRrRzwHzUAFdug-ZeIwSlJGKcGQvcC_hCknoDHIt8jxl9wOlOAOH8" alt="Photo" height="300" width="500" /></center>
-	<center><input type="text" id="Fourth Picture" name="Fourth Picture" size="20" maxlength ="250"><br/><br/></center>
-	<center><img src="https://lh4.googleusercontent.com/xgjtGkGpzBTsCZsZ8QIXkJszokFYyOyq306bZrLAXgK-abYXG-DoPHxQyI80kx1GVLi-zoFck2vnu9AGI5fqRAsRqRhnCGGOp6xvtHuyOuFo0jHR3Ig5GJjyLYkyeiEgfa-1WxE" alt="Photo" height="300" width="500" /></center>
-	<center><input type="text" id="Fifth Picture" name="Fifth Picture" ssize="20" maxlength ="250"><br/><br/></center>
-	<center><img src="https://lh3.googleusercontent.com/j_VenPfRoApwLgHeHQ7Zf0R9bWdeUoS3OzuSWEqRtosjNDyfC2jlN_xgaWco0q2mioo81GrlbxUv6QmVE8bFbDnsGTZhmdmMGjLKIQd63JaRgH2hiMakDelhls4L0G1Z_Zoa5eQ" alt="Photo" height="300" width="500" /></center>
-	<center><input type="text" id="Sixth Picture" name="Sixth Picture" ssize="20" maxlength ="250"><br/><br/></center>
-</div>
-
-<div id="submit">
-<html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
-input[type=text], select, textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    margin-top: 6px;
-    margin-bottom: 16px;
-    resize: vertical;
-}
-
-input[type=submit] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-input[type=submit]:hover {
-    background-color: #45a049;
-}
-
-.container {
-    border-radius: 5px;
-    background-color: #f2eed3;
-    padding: 20px;
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
 }
 </style>
 </head>
-<body>
-	  	  <input type ="submit"  alt="Submit" name= "btnimage" value ="Submit">
-	  	  
-</div>
-</form>
+<body onload="startGame()">
+<script>
 
+var myGamePiece;
+var myObstacles = [];
+var myScore;
 
+function startGame() {
+    myGamePiece = new component(30, 30, "red", 10, 120);
+    myGamePiece.gravity = 0.05;
+    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
+
+function component(width, height, color, x, y, type) {
+    this.type = type;
+    this.score = 0;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;
+    this.gravity = 0;
+    this.gravitySpeed = 0;
+    this.update = function() {
+        ctx = myGameArea.context;
+        if (this.type == "text") {
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.fillStyle = color;
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.gravitySpeed += this.gravity;
+        this.x += this.speedX;
+        this.y += this.speedY + this.gravitySpeed;
+        this.hitBottom();
+    }
+    this.hitBottom = function() {
+        var rockbottom = myGameArea.canvas.height - this.height;
+        if (this.y > rockbottom) {
+            this.y = rockbottom;
+            this.gravitySpeed = 0;
+        }
+    }
+    this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
+}
+
+function updateGameArea() {
+    var x, height, gap, minHeight, maxHeight, minGap, maxGap;
+    for (i = 0; i < myObstacles.length; i += 1) {
+        if (myGamePiece.crashWith(myObstacles[i])) {
+            return;
+        } 
+    }
+    myGameArea.clear();
+    myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        minHeight = 20;
+        maxHeight = 200;
+        height = Math.floor(Math.random()*(maxHeight-minHeight+1)+minHeight);
+        minGap = 50;
+        maxGap = 200;
+        gap = Math.floor(Math.random()*(maxGap-minGap+1)+minGap);
+        myObstacles.push(new component(10, height, "green", x, 0));
+        myObstacles.push(new component(10, x - height - gap, "green", x, height + gap));
+    }
+    for (i = 0; i < myObstacles.length; i += 1) {
+        myObstacles[i].x += -1;
+        myObstacles[i].update();
+    }
+    myScore.text="SCORE: " + myGameArea.frameNo;
+    myScore.update();
+    myGamePiece.newPos();
+    myGamePiece.update();
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
+}
+
+function accelerate(n) {
+    myGamePiece.gravity = n;
+}
+</script>
+<br>
+<button onmousedown="accelerate(-0.2)" onmouseup="accelerate(0.05)">ACCELERATE</button>
+<p>Use the ACCELERATE button to stay in the air</p>
+<p>To earn more money, stay alive! Simple</p>
 </body>
 </html>
+
